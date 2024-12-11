@@ -6,9 +6,7 @@ This project predicts the shelf life of perishable items using a combination of 
 # The Role of the Arrhenius Equation
 
 The Arrhenius equation is key to understanding the relationship between temperature and reaction rates, which directly impacts the spoilage of perishable goods. Here's how it works in the context of shelf life:
-   \[
-k = A \cdot e^{\frac{-E_a}{RT}}
-\]
+   ![Alt text](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.sas.upenn.edu%2F~mabruder%2FArrhenius%2520Equation.html&psig=AOvVaw26H7MPDBDEGzAJnufMbaJ5&ust=1734017832534000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPCxvPqFoIoDFQAAAAAdAAAAABAE "Optional title")
 
 
 ---
