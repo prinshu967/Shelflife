@@ -9,7 +9,15 @@ The Arrhenius equation is key to understanding the relationship between temperat
 ---
    ![Alt text](https://cdn1.byjus.com/wp-content/uploads/2015/12/Arrhenius-Equation-1.png "Optional title")
 ---
+---
+# Why Accurate?:
 
+    The equation captures the exponential increase in reaction rates as temperature rises. This is critical because spoilage processes accelerate significantly at higher temperatures, reducing shelf life.
+
+# Application in Shelf Life:
+
+    By analyzing the reaction rate constant kk under different temperatures, the remaining shelf life can be estimated by determining how close the spoilage process is to reaching its threshold.
+---
 
 ---
 
