@@ -2,6 +2,15 @@
 
 This project predicts the shelf life of perishable items using a combination of the **Arrhenius equation** (scientific modeling of spoilage processes) and a **VGG16-based classification model** for detecting freshness levels. The system enables real-time predictions of freshness and remaining shelf life based on environmental conditions like temperature.
 
+
+# The Role of the Arrhenius Equation
+
+The Arrhenius equation is key to understanding the relationship between temperature and reaction rates, which directly impacts the spoilage of perishable goods. Here's how it works in the context of shelf life:
+   \[
+k = A \cdot e^{\frac{-E_a}{RT}}
+\]
+
+
 ---
 
 ## Features
