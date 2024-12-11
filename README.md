@@ -52,3 +52,7 @@ config.py                   # Configuration settings
 README.md                   # Documentation
 requirements.txt            # Python dependencies
 wsgi.py                     # WSGI entry point for deployment
+---
+# Model Glimps
+   ![Alt text](https://drive.google.com/file/d/1KzVqljpu8Qp4iMyPp28st3W8LxQ7eXqJ/view "Optional title")
+---
