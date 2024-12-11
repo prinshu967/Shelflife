@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Shelf Life Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #25334f;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #d5c1c1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="file"],
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #loading {
+            color: #555;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        #response-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #response-message p {
+            margin: 5px 0;
+        }
+        .success {
+            background-color: #e7f9ed;
+            color: #090a09;
+            border: 1px solid #b2d8bd;
+            text-align: center;
+        }
+        .error {
+            background-color: #f9e7e7;
+            color:red;
+            border: 1px solid #d8b2b2;
+            text-align: center;
+        }
+        #video, #canvas {
+            display: none;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 500px;
+        }
+        select {
+            width: 200px;
+            height: 40px;
+            font-size: 16px;
+            color:white;
+            background-color: rgb(96, 80, 154);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:hover {
+            background-color: #e0e0e0;
+            color: #090a09;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: rgb(178, 235, 182); font-family: cursive; margin: 10px;">This model is trained on 10 items </h1> 
+    <p style="color: rgb(178, 235, 182); font-family: cursive; margin: 10px; text-align: center;">🍎 Apple, 🍌 Banana, 🥒 Cucumber, 🌶️ Bell Pepper, 🌶️ Indian Green Chili, 🍅 Tomato, 🥔 Potato, 🍊 Orange, 🍇 Grapes, and 🥭 Mango.
+    </p> 
+    <div class="container">
+        <h1>Fruit & Veggies Shelf Life Prediction</h1>
+        <form id="predict-form">
+            <select id="mode-selector">
+                <option value="upload">Upload Mode</option>
+                <option value="camera">Camera Mode</option>
+            </select>
+            <input type="file" name="file" id="file-input" accept="image/*">
+            <div id="camera-container" style="display: none;">
+                <video id="video" autoplay></video>
+                <canvas id="canvas"></canvas>
+                <button type="button" id="capture-button">Capture</button>
+            </div>
+            <input type="number" name="temperature" id="temperature-input" placeholder="Temperature (°C)" step="0.1" required>
+            <button type="submit">Predict</button>
+        </form>
+        <div id="loading" style="display: none;">Loading, please wait...</div>
+        <div id="response-message"></div>
+    </div>
+    <script>
+        const modeSelector = document.getElementById('mode-selector');
+        const fileInput = document.getElementById('file-input');
+        const cameraContainer = document.getElementById('camera-container');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture-button');
+        let stream;
+
+        // Toggle between Camera Mode and Upload Mode
+        modeSelector.addEventListener('change', () => {
+            if (modeSelector.value === 'camera') {
+                fileInput.style.display = 'none';
+                cameraContainer.style.display = 'block';
+                startCamera();
+            } else {
+                fileInput.style.display = 'block';
+                cameraContainer.style.display = 'none';
+                stopCamera();
+            }
+        });
+
+        // Start the camera
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.style.display = 'block';
+                video.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+            }
+        }
+
+        // Stop the camera
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            video.style.display = 'none';
+        }
+
+        // Capture the image from the video stream
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas image to a Blob and attach it to the form
+            canvas.toBlob(blob => {
+                const file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+            });
+            alert('Image captured!');
+        });
+
+        // Form submission logic remains unchanged
+        document.getElementById('predict-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const loadingDiv = document.getElementById('loading');
+            const responseDiv = document.getElementById('response-message');
+            loadingDiv.style.display = 'block';
+            responseDiv.innerHTML = '';
+
+            const formData = new FormData();
+            const fileInputElement = document.getElementById('file-input').files[0];
+            const temperatureInput = document.getElementById('temperature-input').value;
+
+            // Validate input
+            if (!fileInputElement || !temperatureInput) {
+                responseDiv.innerHTML = '<p class="error">Please provide both an image file and a temperature value.</p>';
+                loadingDiv.style.display = 'none';
+                return;
+            }
+
+            formData.append('file', fileInputElement);
+            formData.append('temperature', temperatureInput);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                loadingDiv.style.display = 'none';
+
+                if (response.ok) {
+                    responseDiv.innerHTML = `
+                        <div class="success">
+                            <p><strong>Detected Item:</strong> ${result.name}</p>
+                            <p><strong>Category:</strong> ${result.category}</p>
+                            
+                            <p><strong>Shelf Life:</strong> ${result.life} days</p>
+                            <p><strong>Temperature:</strong> ${parseFloat(result.temperature).toFixed(2)}°C</p>
+                        </div>
+                    `;
+                } else {
+                    const errorMessage = result.error || 'An unexpected error occurred.';
+                    responseDiv.innerHTML = `<div class="error"><p>Error: ${errorMessage}</p></div>`;
+                }
+            } catch (err) {
+                loadingDiv.style.display = 'none';
+                responseDiv.innerHTML = `<div class="error"><p>Failed to connect to the server. Please try again later.</p></div>`;
+            }
+        });
+    </script>
+</body>
+</html>
